@@ -216,7 +216,7 @@ elif st.session_state.mode == "Multiple Choice":
         # Reset für die nächste Runde
         st.session_state.pop("choices", None)
         st.session_state.pop("selected_choice", None)
-        st.experimental_rerun()
+        st.rerun()
 
 
 
