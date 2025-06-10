@@ -194,7 +194,7 @@ current_index = st.session_state.index % len(vocab_subset)
 current_word = vocab_subset[current_index]
 
 source = "ru" if from_lang == "🇷🇺 Russisch" else "en"
-target = "en" if source == "ru" else "en"
+target = "en" if source == "ru" else "ru"
 
 source_word = current_word.get(source, "[FEHLT]")
 target_word = current_word.get(target, "[FEHLT]")
