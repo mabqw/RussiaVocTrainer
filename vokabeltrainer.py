@@ -173,6 +173,8 @@ st.title("🇷🇺 Russisch-Vokabeltrainer")
 
 st.sidebar.title("Einstellungen")
 num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), 10)
+englisch_vocab = [word for word in vocab if "ru" in word and word ["en"].strip() !=""]
+vocab_subset2 = englisch_vocab[:nu,_cards2]
 mode = st.sidebar.radio("Lernmodus", ["Eingabe", "Multiple Choice"])
 from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "🇬🇧 Englisch"])
 
@@ -233,7 +235,7 @@ elif mode == "Multiple Choice":
         "choices" not in st.session_state
         or st.session_state.get("last_index") != st.session_state.index
     ):
-        choices = get_random_choices(correct_answer, vocab_subset, target)
+        choices = get_random_choices(correct_answer, vocab_subset2, target)
         st.session_state.choices = choices
         st.session_state.selected_choice = None
         st.session_state.last_index = st.session_state.index
