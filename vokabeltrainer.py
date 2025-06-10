@@ -174,7 +174,7 @@ st.title("🇷🇺 Russisch-Vokabeltrainer")
 st.sidebar.title("Einstellungen")
 num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), 10)
 englisch_vocab = [word for word in vocab if "ru" in word and word ["en"].strip() !=""]
-vocab_subset2 = englisch_vocab[:nu,_cards2]
+vocab_subset2 = englisch_vocab[:num_cards2]
 mode = st.sidebar.radio("Lernmodus", ["Eingabe", "Multiple Choice"])
 from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "🇬🇧 Englisch"])
 
