@@ -12,125 +12,121 @@ import json
 PROGRESS_FILE = "progress.json"
 
 # ---------------------------
-# Vokabelliste (Beispiel, 10+ Wörter – hier vollständig)
+# Vokabelliste (vollständig, mit "en" statt "de")
 # ---------------------------
 vocab = [
-    {"ru": "и", "de": "and"},
-    {"ru": "в", "de": "in"},
-    {"ru": "не", "de": "not"},
-    {"ru": "он", "de": "he"},
-    {"ru": "на", "de": "on, at"},
-    {"ru": "я", "de": "I"},
-    {"ru": "что", "de": "what, that"},
-    {"ru": "тот", "de": "that"},
-    {"ru": "быть", "de": "to be"},
-    {"ru": "с", "de": "with"},
-    {"ru": "а", "de": "but"},
-    {"ru": "весь", "de": "all"},
-    {"ru": "это", "de": "this, it"},
-    {"ru": "как", "de": "how, like"},
-    {"ru": "она", "de": "she"},
-    {"ru": "по", "de": "along, by, according to"},
-    {"ru": "но", "de": "but"},
-    {"ru": "они", "de": "they"},
-    {"ru": "к", "de": "to"},
-    {"ru": "у", "de": "at, by"},
-    {"ru": "ты", "de": "you (informal)"},
-    {"ru": "из", "de": "from, out of"},
-    {"ru": "мы", "de": "we"},
-    {"ru": "за", "de": "behind, for"},
-    {"ru": "вы", "de": "you (formal or plural)"},
-    {"ru": "так", "de": "so, thus"},
-    {"ru": "же", "de": "same, also"},
-    {"ru": "от", "de": "from, of"},
-    {"ru": "сказать", "de": "to say"},
-    {"ru": "этот", "de": "this"},
-    {"ru": "который", "de": "which, who"},
-    {"ru": "мочь", "de": "can, to be able"},
-    {"ru": "человек", "de": "person"},
-    {"ru": "о", "de": "about"},
-    {"ru": "один", "de": "one"},
-    {"ru": "ещё", "de": "still, yet"},
-    {"ru": "бы", "de": "would"},
-    {"ru": "такой", "de": "such"},
-    {"ru": "только", "de": "only"},
-    {"ru": "себя", "de": "oneself"},
-    {"ru": "своё", "de": "one’s own"},
-    {"ru": "какой", "de": "what kind, which"},
-    {"ru": "когда", "de": "when"},
-    {"ru": "уже", "de": "already"},
-    {"ru": "для", "de": "for"},
-    {"ru": "вот", "de": "here is, there is"},
-    {"ru": "кто", "de": "who"},
-    {"ru": "да", "de": "yes"},
-    {"ru": "говорить", "de": "to speak, say"},
-    {"ru": "год", "de": "year"},
-    {"ru": "знать", "de": "to know"},
-    {"ru": "мой", "de": "my"},
-    {"ru": "до", "de": "until, before"},
-    {"ru": "или", "de": "or"},
-    {"ru": "если", "de": "if"},
-    {"ru": "время", "de": "time"},
-    {"ru": "рука", "de": "hand"},
-    {"ru": "нет", "de": "no, not"},
-    {"ru": "самый", "de": "most, the very"},
-    {"ru": "ни", "de": "neither, nor"},
-    {"ru": "стать", "de": "to become"},
-    {"ru": "большой", "de": "big"},
-    {"ru": "даже", "de": "even"},
-    {"ru": "другой", "de": "other"},
-    {"ru": "наш", "de": "our"},
-    {"ru": "под", "de": "under"},
-    {"ru": "где", "de": "where"},
-    {"ru": "дело", "de": "matter, affair"},
-    {"ru": "есть", "de": "to be, to have (there is)"},
-    {"ru": "хорошо", "de": "well, good"},
-    {"ru": "надо", "de": "need to"},
-    {"ru": "тогда", "de": "then"},
-    {"ru": "сейчас", "de": "now"},
-    {"ru": "сам", "de": "self"},
-    {"ru": "чтобы", "de": "in order to, so that"},
-    {"ru": "раз", "de": "time, once"},
-    {"ru": "два", "de": "two"},
-    {"ru": "там", "de": "there"},
-    {"ru": "чем", "de": "than"},
-    {"ru": "глаз", "de": "eye"},
-    {"ru": "жизнь", "de": "life"},
-    {"ru": "первый", "de": "first"},
-    {"ru": "день", "de": "day"},
-    {"ru": "тут", "de": "here"},
-    {"ru": "во", "de": "in (variant of 'в')"},
-    {"ru": "ничего", "de": "nothing"},
-    {"ru": "потом", "de": "then, later"},
-    {"ru": "очень", "de": "very"},
-    {"ru": "со", "de": "with (variant of 'с')"},
-    {"ru": "хотеть", "de": "to want"},
-    {"ru": "лицо", "de": "face"},
-    {"ru": "после", "de": "after"},
-    {"ru": "новый", "de": "new"},
-    {"ru": "без", "de": "without"},
-    {"ru": "говорить", "de": "to speak"},
-    {"ru": "ходить", "de": "to go (by foot, regularly)"},
-    {"ru": "думать", "de": "to think"},
-    {"ru": "спросить", "de": "to ask"},
-    {"ru": "видеть", "de": "to see"},
-    {"ru": "стоять", "de": "to stand"}
+    {"ru": "и", "en": "and"},
+    {"ru": "в", "en": "in"},
+    {"ru": "не", "en": "not"},
+    {"ru": "он", "en": "he"},
+    {"ru": "на", "en": "on, at"},
+    {"ru": "я", "en": "I"},
+    {"ru": "что", "en": "what, that"},
+    {"ru": "тот", "en": "that"},
+    {"ru": "быть", "en": "to be"},
+    {"ru": "с", "en": "with"},
+    {"ru": "а", "en": "but"},
+    {"ru": "весь", "en": "all"},
+    {"ru": "это", "en": "this, it"},
+    {"ru": "как", "en": "how, like"},
+    {"ru": "она", "en": "she"},
+    {"ru": "по", "en": "along, by, according to"},
+    {"ru": "но", "en": "but"},
+    {"ru": "они", "en": "they"},
+    {"ru": "к", "en": "to"},
+    {"ru": "у", "en": "at, by"},
+    {"ru": "ты", "en": "you (informal)"},
+    {"ru": "из", "en": "from, out of"},
+    {"ru": "мы", "en": "we"},
+    {"ru": "за", "en": "behind, for"},
+    {"ru": "вы", "en": "you (formal or plural)"},
+    {"ru": "так", "en": "so, thus"},
+    {"ru": "же", "en": "same, also"},
+    {"ru": "от", "en": "from, of"},
+    {"ru": "сказать", "en": "to say"},
+    {"ru": "этот", "en": "this"},
+    {"ru": "который", "en": "which, who"},
+    {"ru": "мочь", "en": "can, to be able"},
+    {"ru": "человек", "en": "person"},
+    {"ru": "о", "en": "about"},
+    {"ru": "один", "en": "one"},
+    {"ru": "ещё", "en": "still, yet"},
+    {"ru": "бы", "en": "would"},
+    {"ru": "такой", "en": "such"},
+    {"ru": "только", "en": "only"},
+    {"ru": "себя", "en": "oneself"},
+    {"ru": "своё", "en": "one’s own"},
+    {"ru": "какой", "en": "what kind, which"},
+    {"ru": "когда", "en": "when"},
+    {"ru": "уже", "en": "already"},
+    {"ru": "для", "en": "for"},
+    {"ru": "вот", "en": "here is, there is"},
+    {"ru": "кто", "en": "who"},
+    {"ru": "да", "en": "yes"},
+    {"ru": "говорить", "en": "to speak, say"},
+    {"ru": "год", "en": "year"},
+    {"ru": "знать", "en": "to know"},
+    {"ru": "мой", "en": "my"},
+    {"ru": "до", "en": "until, before"},
+    {"ru": "или", "en": "or"},
+    {"ru": "если", "en": "if"},
+    {"ru": "время", "en": "time"},
+    {"ru": "рука", "en": "hand"},
+    {"ru": "нет", "en": "no, not"},
+    {"ru": "самый", "en": "most, the very"},
+    {"ru": "ни", "en": "neither, nor"},
+    {"ru": "стать", "en": "to become"},
+    {"ru": "большой", "en": "big"},
+    {"ru": "даже", "en": "even"},
+    {"ru": "другой", "en": "other"},
+    {"ru": "наш", "en": "our"},
+    {"ru": "под", "en": "under"},
+    {"ru": "где", "en": "where"},
+    {"ru": "дело", "en": "matter, affair"},
+    {"ru": "есть", "en": "to be, to have (there is)"},
+    {"ru": "хорошо", "en": "well, good"},
+    {"ru": "надо", "en": "need to"},
+    {"ru": "тогда", "en": "then"},
+    {"ru": "сейчас", "en": "now"},
+    {"ru": "сам", "en": "self"},
+    {"ru": "чтобы", "en": "in order to, so that"},
+    {"ru": "раз", "en": "time, once"},
+    {"ru": "два", "en": "two"},
+    {"ru": "там", "en": "there"},
+    {"ru": "чем", "en": "than"},
+    {"ru": "глаз", "en": "eye"},
+    {"ru": "жизнь", "en": "life"},
+    {"ru": "первый", "en": "first"},
+    {"ru": "день", "en": "day"},
+    {"ru": "тут", "en": "here"},
+    {"ru": "во", "en": "in (variant of 'в')"},
+    {"ru": "ничего", "en": "nothing"},
+    {"ru": "потом", "en": "then, later"},
+    {"ru": "очень", "en": "very"},
+    {"ru": "со", "en": "with (variant of 'с')"},
+    {"ru": "хотеть", "en": "to want"},
+    {"ru": "лицо", "en": "face"},
+    {"ru": "после", "en": "after"},
+    {"ru": "новый", "en": "new"},
+    {"ru": "без", "en": "without"},
+    {"ru": "говорить", "en": "to speak"},
+    {"ru": "ходить", "en": "to go (by foot, regularly)"},
+    {"ru": "думать", "en": "to think"},
+    {"ru": "спросить", "en": "to ask"},
+    {"ru": "видеть", "en": "to see"},
+    {"ru": "стоять", "en": "to stand"}
 ]
-
 # ---------------------------
 # Hilfsfunktionen
 # ---------------------------
 
 def play_audio(text, lang="ru"):
-    """Gibt das gesprochene Wort wieder."""
     tts = gTTS(text, lang=lang)
     tts.save("audio.mp3")
     with open("audio.mp3", "rb") as audio_file:
         st.audio(audio_file.read(), format="audio/mp3")
 
-
 def get_random_choices(correct, all_words, key):
-    """Erstellt Multiple‑Choice‑Antworten."""
     choices = [correct]
     while len(choices) < 4:
         word = random.choice(all_words)[key]
@@ -139,28 +135,17 @@ def get_random_choices(correct, all_words, key):
     random.shuffle(choices)
     return choices
 
-
 def load_progress():
-    """Lädt gespeicherten Fortschritt aus Datei."""
     if os.path.exists(PROGRESS_FILE):
         try:
             with open(PROGRESS_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 st.session_state.update(data)
         except (json.JSONDecodeError, IOError):
-            pass  # Bei Fehlern neu starten
-
+            pass
 
 def save_progress():
-    """Speichert aktuellen Fortschritt in Datei."""
-    keys = [
-        "index",
-        "correct",
-        "total",
-        "streak",
-        "best_streak",
-        "history",
-    ]
+    keys = ["index", "correct", "total", "streak", "best_streak", "history"]
     data = {k: st.session_state.get(k, 0) for k in keys}
     try:
         with open(PROGRESS_FILE, "w", encoding="utf-8") as f:
@@ -169,18 +154,15 @@ def save_progress():
         st.warning("⚠️ Fortschritt konnte nicht gespeichert werden.")
 
 # ---------------------------
-# Session State Initialisieren & Progress Laden
+# Session State
 # ---------------------------
 if "initialized" not in st.session_state:
-    # Standardwerte setzen
     st.session_state.index = 0
     st.session_state.correct = 0
     st.session_state.total = 0
     st.session_state.streak = 0
     st.session_state.best_streak = 0
     st.session_state.history = []
-
-    # Bereits vorhandenen Fortschritt laden
     load_progress()
     st.session_state.initialized = True
 
@@ -192,7 +174,7 @@ st.title("🇷🇺 Russisch-Vokabeltrainer")
 st.sidebar.title("Einstellungen")
 num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), 10)
 mode = st.sidebar.radio("Lernmodus", ["Eingabe", "Multiple Choice"])
-from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "English"])
+from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "🇬🇧 Englisch"])
 
 if st.sidebar.button("🔄 Statistik zurücksetzen"):
     st.session_state.index = 0
@@ -211,8 +193,8 @@ vocab_subset = vocab[:num_cards]
 current_index = st.session_state.index % len(vocab_subset)
 current_word = vocab_subset[current_index]
 
-source = "ru" if from_lang == "🇷🇺 Russisch" else "de"
-target = "de" if source == "ru" else "ru"
+source = "ru" if from_lang == "🇷🇺 Russisch" else "en"
+target = "en" if source == "ru" else "ru"
 
 source_word = current_word.get(source, "[FEHLT]")
 target_word = current_word.get(target, "[FEHLT]")
