@@ -184,13 +184,26 @@ if st.session_state.mode == "Eingabe":
 elif st.session_state.mode == "Multiple Choice":
     current_word = vocab_subset[st.session_state.index]
     correct_answer = current_word[target]
-    choices = get_random_choices(correct_answer, vocab_subset, target)
+
+    # Nur beim ersten Aufruf generieren
+    if "choices" not in st.session_state or st.session_state.get("last_index") != st.session_state.index:
+        choices = get_random_choices(correct_answer, vocab_subset, target)
+        st.session_state.choices = choices
+        st.session_state.selected_choice = None
+        st.session_state.last_index = st.session_state.index
+
     st.write(f"Was bedeutet: **{current_word[source]}**?")
-    answer = st.radio("Wähle die richtige Übersetzung:", choices)
+    st.session_state.selected_choice = st.radio(
+        "Wähle die richtige Übersetzung:",
+        st.session_state.choices,
+        index=st.session_state.choices.index(st.session_state.selected_choice)
+        if st.session_state.selected_choice in st.session_state.choices else 0,
+        key="radio_choice"
+    )
 
     if st.button("Antwort prüfen"):
         st.session_state.total += 1
-        if answer == correct_answer:
+        if st.session_state.selected_choice == correct_answer:
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
@@ -200,7 +213,11 @@ elif st.session_state.mode == "Multiple Choice":
             st.session_state.streak = 0
 
         st.session_state.index += 1
+        # Reset für die nächste Runde
+        st.session_state.pop("choices", None)
+        st.session_state.pop("selected_choice", None)
         st.experimental_rerun()
+
 
 
 # ---------------------------
