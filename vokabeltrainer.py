@@ -3,9 +3,16 @@ import random
 from gtts import gTTS
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
+import json
 
 # ---------------------------
-# Vokabelliste (Beispiel, 10+ Wörter)
+# Konstante für Datei zur Fortschrittsspeicherung
+# ---------------------------
+PROGRESS_FILE = "progress.json"
+
+# ---------------------------
+# Vokabelliste (Beispiel, 10+ Wörter – hier vollständig)
 # ---------------------------
 vocab = [
     {"ru": "и", "de": "and"},
@@ -113,14 +120,17 @@ vocab = [
 # ---------------------------
 # Hilfsfunktionen
 # ---------------------------
+
 def play_audio(text, lang="ru"):
+    """Gibt das gesprochene Wort wieder."""
     tts = gTTS(text, lang=lang)
     tts.save("audio.mp3")
-    audio_file = open("audio.mp3", "rb")
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/mp3")
+    with open("audio.mp3", "rb") as audio_file:
+        st.audio(audio_file.read(), format="audio/mp3")
+
 
 def get_random_choices(correct, all_words, key):
+    """Erstellt Multiple‑Choice‑Antworten."""
     choices = [correct]
     while len(choices) < 4:
         word = random.choice(all_words)[key]
@@ -129,35 +139,70 @@ def get_random_choices(correct, all_words, key):
     random.shuffle(choices)
     return choices
 
+
+def load_progress():
+    """Lädt gespeicherten Fortschritt aus Datei."""
+    if os.path.exists(PROGRESS_FILE):
+        try:
+            with open(PROGRESS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                st.session_state.update(data)
+        except (json.JSONDecodeError, IOError):
+            pass  # Bei Fehlern neu starten
+
+
+def save_progress():
+    """Speichert aktuellen Fortschritt in Datei."""
+    keys = [
+        "index",
+        "correct",
+        "total",
+        "streak",
+        "best_streak",
+        "history",
+    ]
+    data = {k: st.session_state.get(k, 0) for k in keys}
+    try:
+        with open(PROGRESS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except IOError:
+        st.warning("⚠️ Fortschritt konnte nicht gespeichert werden.")
+
 # ---------------------------
-# Session State Initialisieren
+# Session State Initialisieren & Progress Laden
 # ---------------------------
-if "index" not in st.session_state:
+if "initialized" not in st.session_state:
+    # Standardwerte setzen
     st.session_state.index = 0
     st.session_state.correct = 0
     st.session_state.total = 0
     st.session_state.streak = 0
     st.session_state.best_streak = 0
-    st.session_state.mode = "Eingabe"
     st.session_state.history = []
+
+    # Bereits vorhandenen Fortschritt laden
+    load_progress()
+    st.session_state.initialized = True
 
 # ---------------------------
 # UI: Einstellungen
 # ---------------------------
 st.title("🇷🇺 Russisch-Vokabeltrainer")
+
 st.sidebar.title("Einstellungen")
 num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), 10)
 mode = st.sidebar.radio("Lernmodus", ["Eingabe", "Multiple Choice"])
 from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "English"])
-st.session_state.mode = mode
 
 if st.sidebar.button("🔄 Statistik zurücksetzen"):
+    st.session_state.index = 0
     st.session_state.correct = 0
     st.session_state.total = 0
     st.session_state.streak = 0
     st.session_state.best_streak = 0
     st.session_state.history = []
-
+    save_progress()
+    st.experimental_rerun()
 
 # ---------------------------
 # Lernlogik
@@ -176,7 +221,7 @@ st.markdown(f"### {source_word}")
 if st.button("🔊 Aussprache anhören"):
     play_audio(source_word, lang=source)
 
-if st.session_state.mode == "Eingabe":
+if mode == "Eingabe":
     user_input = st.text_input("Übersetzung eingeben:")
     if st.button("Prüfen"):
         st.session_state.total += 1
@@ -185,19 +230,27 @@ if st.session_state.mode == "Eingabe":
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
-            st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
+            st.session_state.best_streak = max(
+                st.session_state.streak, st.session_state.best_streak
+            )
         else:
             st.error(f"❌ Falsch. Richtig wäre: {target_word}")
             st.session_state.streak = 0
 
-        st.session_state.history.append({"Frage": source_word, "Antwort": user_input, "Korrekt": is_correct})
+        st.session_state.history.append(
+            {"Frage": source_word, "Antwort": user_input, "Korrekt": is_correct}
+        )
         st.session_state.index += 1
+        save_progress()
         st.experimental_rerun()
 
-elif st.session_state.mode == "Multiple Choice":
+elif mode == "Multiple Choice":
     correct_answer = current_word[target]
 
-    if "choices" not in st.session_state or st.session_state.get("last_index") != st.session_state.index:
+    if (
+        "choices" not in st.session_state
+        or st.session_state.get("last_index") != st.session_state.index
+    ):
         choices = get_random_choices(correct_answer, vocab_subset, target)
         st.session_state.choices = choices
         st.session_state.selected_choice = None
@@ -212,7 +265,7 @@ elif st.session_state.mode == "Multiple Choice":
         "Wähle die richtige Übersetzung:",
         st.session_state.choices,
         index=default_index,
-        key="radio_choice"
+        key="radio_choice",
     )
     st.session_state.selected_choice = selected
 
@@ -224,32 +277,42 @@ elif st.session_state.mode == "Multiple Choice":
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
-            st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
+            st.session_state.best_streak = max(
+                st.session_state.streak, st.session_state.best_streak
+            )
         else:
             st.error(f"❌ Falsch. Richtig wäre: {correct_answer}")
             st.session_state.streak = 0
 
-        st.session_state.history.append({"Frage": source_word, "Antwort": st.session_state.selected_choice, "Korrekt": is_correct})
+        st.session_state.history.append(
+            {
+                "Frage": source_word,
+                "Antwort": st.session_state.selected_choice,
+                "Korrekt": is_correct,
+            }
+        )
         st.session_state.index += 1
         st.session_state.pop("choices", None)
         st.session_state.pop("selected_choice", None)
-        st.rerun()
+        save_progress()
+        st.experimental_rerun()
 
 # ---------------------------
 # Fortschritt & Statistik
 # ---------------------------
-st.sidebar.markdown(f"**Fortschritt**: {st.session_state.correct}/{st.session_state.total} korrekt")
+st.sidebar.markdown(
+    f"**Fortschritt**: {st.session_state.correct}/{st.session_state.total} korrekt"
+)
 st.sidebar.markdown(f"🔥 Streak: {st.session_state.streak}")
 st.sidebar.markdown(f"🏆 Rekord: {st.session_state.best_streak}")
 
-
 if st.sidebar.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.history:
     df = pd.DataFrame(st.session_state.history)
-    df['Gesamt'] = df.index + 1
-    df['Richtig'] = df['Korrekt'].cumsum()
+    df["Gesamt"] = df.index + 1
+    df["Richtig"] = df["Korrekt"].cumsum()
 
     fig, ax = plt.subplots()
-    ax.plot(df['Gesamt'], df['Richtig'], marker='o')
+    ax.plot(df["Gesamt"], df["Richtig"], marker="o")
     ax.set_xlabel("Gesamtversuche")
     ax.set_ylabel("Richtige Antworten")
     ax.set_title("Lernfortschritt")
@@ -260,4 +323,3 @@ if st.sidebar.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.h
 # ---------------------------
 if st.sidebar.checkbox("📚 Vokabeltabelle anzeigen"):
     st.sidebar.dataframe(pd.DataFrame(vocab_subset))
-
