@@ -129,7 +129,7 @@ def play_audio(text, lang="ru"):
 def get_random_choices(correct, all_words, key):
     choices = [correct]
     while len(choices) < 4:
-        word = random.choice(all_words)[key]
+        word = random.choice(target, all_words)[key]
         if word not in choices:
             choices.append(word)
     random.shuffle(choices)
