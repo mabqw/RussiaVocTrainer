@@ -148,7 +148,7 @@ st.title("🇷🇺 Russisch-Vokabeltrainer")
 st.sidebar.title("Einstellungen")
 num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), 10)
 mode = st.sidebar.radio("Lernmodus", ["Eingabe", "Multiple Choice"])
-from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "🇩🇪 Deutsch"])
+from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "English"])
 st.session_state.mode = mode
 
 if st.sidebar.button("🔄 Statistik zurücksetzen"):
@@ -157,6 +157,7 @@ if st.sidebar.button("🔄 Statistik zurücksetzen"):
     st.session_state.streak = 0
     st.session_state.best_streak = 0
     st.session_state.history = []
+
 
 # ---------------------------
 # Lernlogik
@@ -241,10 +242,8 @@ st.sidebar.markdown(f"**Fortschritt**: {st.session_state.correct}/{st.session_st
 st.sidebar.markdown(f"🔥 Streak: {st.session_state.streak}")
 st.sidebar.markdown(f"🏆 Rekord: {st.session_state.best_streak}")
 
-# ---------------------------
-# Fortschrittsgraph
-# ---------------------------
-if st.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.history:
+
+if st.sidebar.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.history:
     df = pd.DataFrame(st.session_state.history)
     df['Gesamt'] = df.index + 1
     df['Richtig'] = df['Korrekt'].cumsum()
@@ -254,10 +253,11 @@ if st.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.history:
     ax.set_xlabel("Gesamtversuche")
     ax.set_ylabel("Richtige Antworten")
     ax.set_title("Lernfortschritt")
-    st.pyplot(fig)
+    st.sidebar.pyplot(fig)
 
 # ---------------------------
-# Vokabel-Tabelle
+# Vokabel-Tabelle in Sidebar
 # ---------------------------
-if st.checkbox("📚 Vokabeltabelle anzeigen"):
-    st.dataframe(pd.DataFrame(vocab_subset))
+if st.sidebar.checkbox("📚 Vokabeltabelle anzeigen"):
+    st.sidebar.dataframe(pd.DataFrame(vocab_subset))
+
