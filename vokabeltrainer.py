@@ -152,7 +152,7 @@ if mode == "Eingabe":
         )
         st.session_state.index += 1
         save_data(st.session_state.data)
-        st.experimental_rerun()
+        st.rerun()
 
 elif mode == "Multiple Choice":
     correct_answer = target_word
