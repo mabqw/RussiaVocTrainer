@@ -1,51 +1,11 @@
 import streamlit as st
 import random
-import json
-import os
 from gtts import gTTS
+import matplotlib.pyplot as plt
+import pandas as pd
 
 # ---------------------------
-# Speicherpfad definieren
-# ---------------------------
-SAVE_FILE = "trainer_data.json"
-
-# ---------------------------
-# Funktionen zur Datenspeicherung
-# ---------------------------
-def load_data():
-    if os.path.exists(SAVE_FILE):
-        with open(SAVE_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    else:
-        return {
-            "progress": {
-                "correct_answers": 0,
-                "total_attempts": 0,
-                "streak": 0,
-                "best_streak": 0
-            },
-            "learned_words": {},
-            "settings": {
-                "max_words": 10
-            }
-        }
-
-def save_data(data):
-    with open(SAVE_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-# ---------------------------
-# Audiofunktion
-# ---------------------------
-def play_audio(text, lang="ru"):
-    tts = gTTS(text, lang=lang)
-    tts.save("audio.mp3")
-    audio_file = open("audio.mp3", "rb")
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/mp3")
-
-# ---------------------------
-# Vokabelliste
+# Vokabelliste (Beispiel, 10+ Wörter)
 # ---------------------------
 vocab = [
     {"ru": "и", "de": "and"},
@@ -80,12 +40,86 @@ vocab = [
     {"ru": "этот", "de": "this"},
     {"ru": "который", "de": "which, who"},
     {"ru": "мочь", "de": "can, to be able"},
-    {"ru": "человек", "de": "person"}
+    {"ru": "человек", "de": "person"},
+    {"ru": "о", "de": "about"},
+    {"ru": "один", "de": "one"},
+    {"ru": "ещё", "de": "still, yet"},
+    {"ru": "бы", "de": "would"},
+    {"ru": "такой", "de": "such"},
+    {"ru": "только", "de": "only"},
+    {"ru": "себя", "de": "oneself"},
+    {"ru": "своё", "de": "one’s own"},
+    {"ru": "какой", "de": "what kind, which"},
+    {"ru": "когда", "de": "when"},
+    {"ru": "уже", "de": "already"},
+    {"ru": "для", "de": "for"},
+    {"ru": "вот", "de": "here is, there is"},
+    {"ru": "кто", "de": "who"},
+    {"ru": "да", "de": "yes"},
+    {"ru": "говорить", "de": "to speak, say"},
+    {"ru": "год", "de": "year"},
+    {"ru": "знать", "de": "to know"},
+    {"ru": "мой", "de": "my"},
+    {"ru": "до", "de": "until, before"},
+    {"ru": "или", "de": "or"},
+    {"ru": "если", "de": "if"},
+    {"ru": "время", "de": "time"},
+    {"ru": "рука", "de": "hand"},
+    {"ru": "нет", "de": "no, not"},
+    {"ru": "самый", "de": "most, the very"},
+    {"ru": "ни", "de": "neither, nor"},
+    {"ru": "стать", "de": "to become"},
+    {"ru": "большой", "de": "big"},
+    {"ru": "даже", "de": "even"},
+    {"ru": "другой", "de": "other"},
+    {"ru": "наш", "de": "our"},
+    {"ru": "под", "de": "under"},
+    {"ru": "где", "de": "where"},
+    {"ru": "дело", "de": "matter, affair"},
+    {"ru": "есть", "de": "to be, to have (there is)"},
+    {"ru": "хорошо", "de": "well, good"},
+    {"ru": "надо", "de": "need to"},
+    {"ru": "тогда", "de": "then"},
+    {"ru": "сейчас", "de": "now"},
+    {"ru": "сам", "de": "self"},
+    {"ru": "чтобы", "de": "in order to, so that"},
+    {"ru": "раз", "de": "time, once"},
+    {"ru": "два", "de": "two"},
+    {"ru": "там", "de": "there"},
+    {"ru": "чем", "de": "than"},
+    {"ru": "глаз", "de": "eye"},
+    {"ru": "жизнь", "de": "life"},
+    {"ru": "первый", "de": "first"},
+    {"ru": "день", "de": "day"},
+    {"ru": "тут", "de": "here"},
+    {"ru": "во", "de": "in (variant of 'в')"},
+    {"ru": "ничего", "de": "nothing"},
+    {"ru": "потом", "de": "then, later"},
+    {"ru": "очень", "de": "very"},
+    {"ru": "со", "de": "with (variant of 'с')"},
+    {"ru": "хотеть", "de": "to want"},
+    {"ru": "лицо", "de": "face"},
+    {"ru": "после", "de": "after"},
+    {"ru": "новый", "de": "new"},
+    {"ru": "без", "de": "without"},
+    {"ru": "говорить", "de": "to speak"},
+    {"ru": "ходить", "de": "to go (by foot, regularly)"},
+    {"ru": "думать", "de": "to think"},
+    {"ru": "спросить", "de": "to ask"},
+    {"ru": "видеть", "de": "to see"},
+    {"ru": "стоять", "de": "to stand"}
 ]
 
 # ---------------------------
 # Hilfsfunktionen
 # ---------------------------
+def play_audio(text, lang="ru"):
+    tts = gTTS(text, lang=lang)
+    tts.save("audio.mp3")
+    audio_file = open("audio.mp3", "rb")
+    audio_bytes = audio_file.read()
+    st.audio(audio_bytes, format="audio/mp3")
+
 def get_random_choices(correct, all_words, key):
     choices = [correct]
     while len(choices) < 4:
@@ -96,27 +130,33 @@ def get_random_choices(correct, all_words, key):
     return choices
 
 # ---------------------------
-# Session State
+# Session State Initialisieren
 # ---------------------------
-if "data" not in st.session_state:
-    st.session_state.data = load_data()
-
 if "index" not in st.session_state:
     st.session_state.index = 0
+    st.session_state.correct = 0
+    st.session_state.total = 0
+    st.session_state.streak = 0
+    st.session_state.best_streak = 0
     st.session_state.mode = "Eingabe"
-    st.session_state.selected_choice = None
+    st.session_state.history = []
 
 # ---------------------------
 # UI: Einstellungen
 # ---------------------------
 st.title("🇷🇺 Russisch-Vokabeltrainer")
 st.sidebar.title("Einstellungen")
-num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), st.session_state.data["settings"].get("max_words", 10))
+num_cards = st.sidebar.slider("Wie viele Vokabeln lernen?", 5, len(vocab), 10)
 mode = st.sidebar.radio("Lernmodus", ["Eingabe", "Multiple Choice"])
 from_lang = st.sidebar.radio("Was wird gezeigt?", ["🇷🇺 Russisch", "🇩🇪 Deutsch"])
-
-st.session_state.data["settings"]["max_words"] = num_cards
 st.session_state.mode = mode
+
+if st.sidebar.button("🔄 Statistik zurücksetzen"):
+    st.session_state.correct = 0
+    st.session_state.total = 0
+    st.session_state.streak = 0
+    st.session_state.best_streak = 0
+    st.session_state.history = []
 
 # ---------------------------
 # Lernlogik
@@ -135,65 +175,89 @@ st.markdown(f"### {source_word}")
 if st.button("🔊 Aussprache anhören"):
     play_audio(source_word, lang=source)
 
-if mode == "Eingabe":
+if st.session_state.mode == "Eingabe":
     user_input = st.text_input("Übersetzung eingeben:")
     if st.button("Prüfen"):
-        st.session_state.data["progress"]["total_attempts"] += 1
-        if user_input.strip().lower() == target_word.lower():
+        st.session_state.total += 1
+        is_correct = user_input.strip().lower() == target_word.lower()
+        if is_correct:
             st.success("✅ Richtig!")
-            st.session_state.data["progress"]["correct_answers"] += 1
-            st.session_state.data["progress"]["streak"] += 1
+            st.session_state.correct += 1
+            st.session_state.streak += 1
+            st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
             st.error(f"❌ Falsch. Richtig wäre: {target_word}")
-            st.session_state.data["progress"]["streak"] = 0
-        st.session_state.data["progress"]["best_streak"] = max(
-            st.session_state.data["progress"]["best_streak"],
-            st.session_state.data["progress"]["streak"]
-        )
+            st.session_state.streak = 0
+
+        st.session_state.history.append({"Frage": source_word, "Antwort": user_input, "Korrekt": is_correct})
         st.session_state.index += 1
-        save_data(st.session_state.data)
-        st.rerun()
+        st.experimental_rerun()
 
-elif mode == "Multiple Choice":
-    correct_answer = target_word
+elif st.session_state.mode == "Multiple Choice":
+    correct_answer = current_word[target]
+
     if "choices" not in st.session_state or st.session_state.get("last_index") != st.session_state.index:
-        st.session_state.choices = get_random_choices(correct_answer, vocab_subset, target)
-        st.session_state.last_index = st.session_state.index
+        choices = get_random_choices(correct_answer, vocab_subset, target)
+        st.session_state.choices = choices
         st.session_state.selected_choice = None
+        st.session_state.last_index = st.session_state.index
 
-    st.session_state.selected_choice = st.radio(
+    try:
+        default_index = st.session_state.choices.index(st.session_state.selected_choice)
+    except (ValueError, TypeError):
+        default_index = 0
+
+    selected = st.radio(
         "Wähle die richtige Übersetzung:",
         st.session_state.choices,
-        index=st.session_state.choices.index(st.session_state.selected_choice)
-        if st.session_state.selected_choice in st.session_state.choices else 0,
+        index=default_index,
         key="radio_choice"
     )
+    st.session_state.selected_choice = selected
 
     if st.button("Antwort prüfen"):
-        st.session_state.data["progress"]["total_attempts"] += 1
-        if st.session_state.selected_choice == correct_answer:
+        st.session_state.total += 1
+        is_correct = st.session_state.selected_choice == correct_answer
+
+        if is_correct:
             st.success("✅ Richtig!")
-            st.session_state.data["progress"]["correct_answers"] += 1
-            st.session_state.data["progress"]["streak"] += 1
+            st.session_state.correct += 1
+            st.session_state.streak += 1
+            st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
             st.error(f"❌ Falsch. Richtig wäre: {correct_answer}")
-            st.session_state.data["progress"]["streak"] = 0
+            st.session_state.streak = 0
 
-        st.session_state.data["progress"]["best_streak"] = max(
-            st.session_state.data["progress"]["best_streak"],
-            st.session_state.data["progress"]["streak"]
-        )
-
+        st.session_state.history.append({"Frage": source_word, "Antwort": st.session_state.selected_choice, "Korrekt": is_correct})
         st.session_state.index += 1
         st.session_state.pop("choices", None)
         st.session_state.pop("selected_choice", None)
-        save_data(st.session_state.data)
         st.rerun()
 
 # ---------------------------
-# Fortschrittsanzeige
+# Fortschritt & Statistik
 # ---------------------------
-p = st.session_state.data["progress"]
-st.sidebar.markdown(f"**Fortschritt**: {p['correct_answers']}/{p['total_attempts']} korrekt")
-st.sidebar.markdown(f"🔥 Streak: {p['streak']}")
-st.sidebar.markdown(f"🏆 Rekord: {p['best_streak']}")
+st.sidebar.markdown(f"**Fortschritt**: {st.session_state.correct}/{st.session_state.total} korrekt")
+st.sidebar.markdown(f"🔥 Streak: {st.session_state.streak}")
+st.sidebar.markdown(f"🏆 Rekord: {st.session_state.best_streak}")
+
+# ---------------------------
+# Fortschrittsgraph
+# ---------------------------
+if st.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.history:
+    df = pd.DataFrame(st.session_state.history)
+    df['Gesamt'] = df.index + 1
+    df['Richtig'] = df['Korrekt'].cumsum()
+
+    fig, ax = plt.subplots()
+    ax.plot(df['Gesamt'], df['Richtig'], marker='o')
+    ax.set_xlabel("Gesamtversuche")
+    ax.set_ylabel("Richtige Antworten")
+    ax.set_title("Lernfortschritt")
+    st.pyplot(fig)
+
+# ---------------------------
+# Vokabel-Tabelle
+# ---------------------------
+if st.checkbox("📚 Vokabeltabelle anzeigen"):
+    st.dataframe(pd.DataFrame(vocab_subset))
