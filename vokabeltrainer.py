@@ -182,20 +182,26 @@ if st.session_state.mode == "Eingabe":
         st.experimental_rerun()
 
 elif st.session_state.mode == "Multiple Choice":
-    choices = get_random_choices(target_word, vocab_subset, target)
+    current_word = vocab_subset[st.session_state.index]
+    correct_answer = current_word[target]
+    choices = get_random_choices(correct_answer, vocab_subset, target)
+    st.write(f"Was bedeutet: **{current_word[source]}**?")
     answer = st.radio("Wähle die richtige Übersetzung:", choices)
+
     if st.button("Antwort prüfen"):
         st.session_state.total += 1
-        if answer == target_word:
+        if answer == correct_answer:
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
             st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
-            st.error(f"❌ Falsch. Richtig wäre: {target_word}")
+            st.error(f"❌ Falsch. Richtig wäre: {correct_answer}")
             st.session_state.streak = 0
+
         st.session_state.index += 1
         st.experimental_rerun()
+
 
 # ---------------------------
 # Fortschrittsanzeige
