@@ -1,43 +1,21 @@
 import streamlit as st
 import random
-import json
-import os
 from gtts import gTTS
 
 # ---------------------------
-# Laden der Vokabeln
+# Vokabelliste (Beispiel, 10 Wörter)
 # ---------------------------
 vocab = [
-    ("и", "and"), ("в", "in"), ("не", "not"), ("он", "he"), ("на", "on, at"),
-    ("я", "I"), ("что", "what, that"), ("тот", "that"), ("быть", "to be"),
-    ("с", "with"), ("а", "but"), ("весь", "all"), ("это", "this, it"),
-    ("как", "how, like"), ("она", "she"), ("по", "along, by, according to"),
-    ("но", "but"), ("они", "they"), ("к", "to"), ("у", "at, by"),
-    ("ты", "you (informal)"), ("из", "from, out of"), ("мы", "we"),
-    ("за", "behind, for"), ("вы", "you (formal or plural)"), ("так", "so, thus"),
-    ("же", "same, also"), ("от", "from, of"), ("сказать", "to say"),
-    ("этот", "this"), ("который", "which, who"), ("мочь", "can, to be able"),
-    ("человек", "person"), ("о", "about"), ("один", "one"), ("ещё", "still, yet"),
-    ("бы", "would"), ("такой", "such"), ("только", "only"), ("себя", "oneself"),
-    ("своё", "one's own"), ("какой", "what kind, which"), ("когда", "when"),
-    ("уже", "already"), ("для", "for"), ("вот", "here is, there is"),
-    ("кто", "who"), ("да", "yes"), ("говорить", "to speak, say"),
-    ("год", "year"), ("знать", "to know"), ("мой", "my"), ("до", "until, before"),
-    ("или", "or"), ("если", "if"), ("время", "time"), ("рука", "hand"),
-    ("нет", "no, not"), ("самый", "most, the very"), ("ни", "neither, nor"),
-    ("стать", "to become"), ("большой", "big"), ("даже", "even"),
-    ("другой", "other"), ("наш", "our"), ("под", "under"), ("где", "where"),
-    ("дело", "matter, affair"), ("есть", "to be, to have (there is)"),
-    ("хорошо", "well, good"), ("надо", "need to"), ("тогда", "then"),
-    ("сейчас", "now"), ("сам", "self"), ("чтобы", "in order to, so that"),
-    ("раз", "time, once"), ("два", "two"), ("там", "there"), ("чем", "than"),
-    ("глаз", "eye"), ("жизнь", "life"), ("первый", "first"), ("день", "day"),
-    ("тут", "here"), ("во", "in (variant of 'в')"), ("ничего", "nothing"),
-    ("потом", "then, later"), ("очень", "very"), ("со", "with (variant of 'с')"),
-    ("хотеть", "to want"), ("лицо", "face"), ("после", "after"),
-    ("новый", "new"), ("без", "without"), ("говорить", "to speak"),
-    ("ходить", "to go (by foot, regularly)"), ("думать", "to think"),
-    ("спросить", "to ask"), ("видеть", "to see"), ("стоять", "to stand")
+    {"ru": "привет", "de": "hallo"},
+    {"ru": "пока", "de": "tschüss"},
+    {"ru": "спасибо", "de": "danke"},
+    {"ru": "да", "de": "ja"},
+    {"ru": "нет", "de": "nein"},
+    {"ru": "пожалуйста", "de": "bitte"},
+    {"ru": "доброе утро", "de": "guten Morgen"},
+    {"ru": "добрый вечер", "de": "guten Abend"},
+    {"ru": "извините", "de": "Entschuldigung"},
+    {"ru": "как дела?", "de": "wie geht's?"}
 ]
 
 # ---------------------------
@@ -95,38 +73,35 @@ target_word = current_word.get(target, "[FEHLT]")
 
 st.markdown(f"### {source_word}")
 if st.button("🔊 Aussprache anhören"):
-    play_audio(current_word[source], lang=source)
-
-user_input = ""
-correct = current_word[target]
+    play_audio(source_word, lang=source)
 
 if st.session_state.mode == "Eingabe":
     user_input = st.text_input("Übersetzung eingeben:")
     if st.button("Prüfen"):
         st.session_state.total += 1
-        if user_input.strip().lower() == correct.lower():
+        if user_input.strip().lower() == target_word.lower():
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
             st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
-            st.error(f"❌ Falsch. Richtig wäre: {correct}")
+            st.error(f"❌ Falsch. Richtig wäre: {target_word}")
             st.session_state.streak = 0
         st.session_state.index += 1
         st.experimental_rerun()
 
 elif st.session_state.mode == "Multiple Choice":
-    choices = get_random_choices(correct, vocab_subset, target)
+    choices = get_random_choices(target_word, vocab_subset, target)
     answer = st.radio("Wähle die richtige Übersetzung:", choices)
     if st.button("Antwort prüfen"):
         st.session_state.total += 1
-        if answer == correct:
+        if answer == target_word:
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
             st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
-            st.error(f"❌ Falsch. Richtig wäre: {correct}")
+            st.error(f"❌ Falsch. Richtig wäre: {target_word}")
             st.session_state.streak = 0
         st.session_state.index += 1
         st.experimental_rerun()
