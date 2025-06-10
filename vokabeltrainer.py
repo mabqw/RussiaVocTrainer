@@ -84,12 +84,16 @@ st.session_state.mode = mode
 # Lernlogik
 # ---------------------------
 vocab_subset = vocab[:num_cards]
-current_word = vocab_subset[st.session_state.index % len(vocab_subset)]
+current_index = st.session_state.index % len(vocab_subset)
+current_word = vocab_subset[current_index]
 
 source = "ru" if from_lang == "🇷🇺 Russisch" else "de"
 target = "de" if source == "ru" else "ru"
 
-st.markdown(f"### {current_word[source]}")
+source_word = current_word.get(source, "[FEHLT]")
+target_word = current_word.get(target, "[FEHLT]")
+
+st.markdown(f"### {source_word}")
 if st.button("🔊 Aussprache anhören"):
     play_audio(current_word[source], lang=source)
 
