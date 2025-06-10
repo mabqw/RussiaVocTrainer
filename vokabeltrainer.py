@@ -202,7 +202,7 @@ if st.sidebar.button("🔄 Statistik zurücksetzen"):
     st.session_state.best_streak = 0
     st.session_state.history = []
     save_progress()
-    st.experimental_rerun()
+    st.rerun()
 
 # ---------------------------
 # Lernlogik
@@ -242,7 +242,7 @@ if mode == "Eingabe":
         )
         st.session_state.index += 1
         save_progress()
-        st.experimental_rerun()
+        st.rerun()
 
 elif mode == "Multiple Choice":
     correct_answer = current_word[target]
@@ -295,7 +295,7 @@ elif mode == "Multiple Choice":
         st.session_state.pop("choices", None)
         st.session_state.pop("selected_choice", None)
         save_progress()
-        st.experimental_rerun()
+        st.rerun()
 
 # ---------------------------
 # Fortschritt & Statistik
