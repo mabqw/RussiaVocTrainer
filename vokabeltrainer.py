@@ -6,14 +6,9 @@ import pandas as pd
 import os
 import json
 
-# ---------------------------
-# Konstante für Datei zur Fortschrittsspeicherung
-# ---------------------------
 PROGRESS_FILE = "progress.json"
 
-# ---------------------------
-# Vokabelliste (vollständig, mit "en" statt "de")
-# ---------------------------
+# Vokabelliste (gekürzt hier zur Übersicht, bitte ggf. erweitern)
 vocab = [
     {"ru": "и", "en": "and"},
     {"ru": "в", "en": "in"},
@@ -116,10 +111,6 @@ vocab = [
     {"ru": "видеть", "en": "to see"},
     {"ru": "стоять", "en": "to stand"}
 ]
-# ---------------------------
-# Hilfsfunktionen
-# ---------------------------
-
 def play_audio(text, lang="ru"):
     tts = gTTS(text, lang=lang)
     tts.save("audio.mp3")
@@ -153,9 +144,6 @@ def save_progress():
     except IOError:
         st.warning("⚠️ Fortschritt konnte nicht gespeichert werden.")
 
-# ---------------------------
-# Session State
-# ---------------------------
 if "initialized" not in st.session_state:
     st.session_state.index = 0
     st.session_state.correct = 0
@@ -166,9 +154,6 @@ if "initialized" not in st.session_state:
     load_progress()
     st.session_state.initialized = True
 
-# ---------------------------
-# UI: Einstellungen
-# ---------------------------
 st.title("🇷🇺 Russisch-Vokabeltrainer")
 
 st.sidebar.title("Einstellungen")
@@ -186,9 +171,6 @@ if st.sidebar.button("🔄 Statistik zurücksetzen"):
     save_progress()
     st.rerun()
 
-# ---------------------------
-# Lernlogik
-# ---------------------------
 vocab_subset = vocab[:num_cards]
 current_index = st.session_state.index % len(vocab_subset)
 current_word = vocab_subset[current_index]
@@ -212,16 +194,12 @@ if mode == "Eingabe":
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
-            st.session_state.best_streak = max(
-                st.session_state.streak, st.session_state.best_streak
-            )
+            st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
             st.error(f"❌ Falsch. Richtig wäre: {target_word}")
             st.session_state.streak = 0
 
-        st.session_state.history.append(
-            {"Frage": source_word, "Antwort": user_input, "Korrekt": is_correct}
-        )
+        st.session_state.history.append({"Frage": source_word, "Antwort": user_input, "Korrekt": is_correct})
         st.session_state.index += 1
         save_progress()
         st.rerun()
@@ -233,20 +211,14 @@ elif mode == "Multiple Choice":
         "choices" not in st.session_state
         or st.session_state.get("last_index") != st.session_state.index
     ):
-        choices = get_random_choices(current_word, vocab_subset, target)
+        choices = get_random_choices(current_word[target], vocab_subset, target)
         st.session_state.choices = choices
         st.session_state.selected_choice = None
         st.session_state.last_index = st.session_state.index
 
-    try:
-        default_index = st.session_state.choices.index(st.session_state.selected_choice)
-    except (ValueError, TypeError):
-        default_index = 0
-
     selected = st.radio(
         "Wähle die richtige Übersetzung:",
         st.session_state.choices,
-        index=default_index,
         key="radio_choice",
     )
     st.session_state.selected_choice = selected
@@ -259,19 +231,13 @@ elif mode == "Multiple Choice":
             st.success("✅ Richtig!")
             st.session_state.correct += 1
             st.session_state.streak += 1
-            st.session_state.best_streak = max(
-                st.session_state.streak, st.session_state.best_streak
-            )
+            st.session_state.best_streak = max(st.session_state.streak, st.session_state.best_streak)
         else:
             st.error(f"❌ Falsch. Richtig wäre: {correct_answer}")
             st.session_state.streak = 0
 
         st.session_state.history.append(
-            {
-                "Frage": source_word,
-                "Antwort": st.session_state.selected_choice,
-                "Korrekt": is_correct,
-            }
+            {"Frage": source_word, "Antwort": st.session_state.selected_choice, "Korrekt": is_correct}
         )
         st.session_state.index += 1
         st.session_state.pop("choices", None)
@@ -279,53 +245,7 @@ elif mode == "Multiple Choice":
         save_progress()
         st.rerun()
 
-    try:
-        default_index = st.session_state.choices.index(st.session_state.selected_choice)
-    except (ValueError, TypeError):
-        default_index = 0
-
-    selected = st.radio(
-        "Wähle die richtige Übersetzung:",
-        st.session_state.choices,
-        index=default_index,
-        key="radio_choice",
-    )
-    st.session_state.selected_choice = selected
-
-    if st.button("Antwort prüfen"):
-        st.session_state.total += 1
-        is_correct = st.session_state.selected_choice == correct_answer
-
-        if is_correct:
-            st.success("✅ Richtig!")
-            st.session_state.correct += 1
-            st.session_state.streak += 1
-            st.session_state.best_streak = max(
-                st.session_state.streak, st.session_state.best_streak
-            )
-        else:
-            st.error(f"❌ Falsch. Richtig wäre: {correct_answer}")
-            st.session_state.streak = 0
-
-        st.session_state.history.append(
-            {
-                "Frage": source_word,
-                "Antwort": st.session_state.selected_choice,
-                "Korrekt": is_correct,
-            }
-        )
-        st.session_state.index += 1
-        st.session_state.pop("choices", None)
-        st.session_state.pop("selected_choice", None)
-        save_progress()
-        st.rerun()
-
-# ---------------------------
-# Fortschritt & Statistik
-# ---------------------------
-st.sidebar.markdown(
-    f"**Fortschritt**: {st.session_state.correct}/{st.session_state.total} korrekt"
-)
+st.sidebar.markdown(f"**Fortschritt**: {st.session_state.correct}/{st.session_state.total} korrekt")
 st.sidebar.markdown(f"🔥 Streak: {st.session_state.streak}")
 st.sidebar.markdown(f"🏆 Rekord: {st.session_state.best_streak}")
 
@@ -341,8 +261,5 @@ if st.sidebar.checkbox("📈 Fortschrittsgraph anzeigen") and st.session_state.h
     ax.set_title("Lernfortschritt")
     st.sidebar.pyplot(fig)
 
-# ---------------------------
-# Vokabel-Tabelle in Sidebar
-# ---------------------------
 if st.sidebar.checkbox("📚 Vokabeltabelle anzeigen"):
     st.sidebar.dataframe(pd.DataFrame(vocab_subset))
