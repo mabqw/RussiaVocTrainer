@@ -227,26 +227,57 @@ if mode == "Eingabe":
         st.rerun()
 
 elif mode == "Multiple Choice":
-correct_answer = current_word[target]
+    correct_answer = current_word[target]
 
     if (
         "choices" not in st.session_state
         or st.session_state.get("last_index") != st.session_state.index
     ):
-        # Wähle zufällige Optionen basierend auf dem Ziel (also Übersetzungssprache)
         choices = get_random_choices(current_word, vocab_subset, target)
-        # Extrahiere die Übersetzungen aus den Wortobjekten
-        choices = [word[target] for word in vocab_subset if word[target] in choices or word == current_word]
-        # Ergänzen auf 4 zufällige Antwortmöglichkeiten (inkl. korrekt)
-        while len(choices) < 4:
-            candidate = random.choice(vocab_subset)
-            if candidate[target] not in choices:
-                choices.append(candidate[target])
-        random.shuffle(choices)
-    
         st.session_state.choices = choices
         st.session_state.selected_choice = None
         st.session_state.last_index = st.session_state.index
+
+    try:
+        default_index = st.session_state.choices.index(st.session_state.selected_choice)
+    except (ValueError, TypeError):
+        default_index = 0
+
+    selected = st.radio(
+        "Wähle die richtige Übersetzung:",
+        st.session_state.choices,
+        index=default_index,
+        key="radio_choice",
+    )
+    st.session_state.selected_choice = selected
+
+    if st.button("Antwort prüfen"):
+        st.session_state.total += 1
+        is_correct = st.session_state.selected_choice == correct_answer
+
+        if is_correct:
+            st.success("✅ Richtig!")
+            st.session_state.correct += 1
+            st.session_state.streak += 1
+            st.session_state.best_streak = max(
+                st.session_state.streak, st.session_state.best_streak
+            )
+        else:
+            st.error(f"❌ Falsch. Richtig wäre: {correct_answer}")
+            st.session_state.streak = 0
+
+        st.session_state.history.append(
+            {
+                "Frage": source_word,
+                "Antwort": st.session_state.selected_choice,
+                "Korrekt": is_correct,
+            }
+        )
+        st.session_state.index += 1
+        st.session_state.pop("choices", None)
+        st.session_state.pop("selected_choice", None)
+        save_progress()
+        st.rerun()
 
     try:
         default_index = st.session_state.choices.index(st.session_state.selected_choice)
