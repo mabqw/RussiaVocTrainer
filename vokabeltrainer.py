@@ -227,13 +227,27 @@ if mode == "Eingabe":
         st.rerun()
 
 elif mode == "Multiple Choice":
-    correct_answer = current_word[target]
+correct_answer = current_word[target]
 
-    if (
-        "choices" not in st.session_state
-        or st.session_state.get("last_index") != st.session_state.index
-    ):
-        choices = get_random_choices(correct_answer, vocab_subset, target)
+if (
+    "choices" not in st.session_state
+    or st.session_state.get("last_index") != st.session_state.index
+):
+    # Wähle zufällige Optionen basierend auf dem Ziel (also Übersetzungssprache)
+    choices = get_random_choices(current_word, vocab_subset, target)
+    # Extrahiere die Übersetzungen aus den Wortobjekten
+    choices = [word[target] for word in vocab_subset if word[target] in choices or word == current_word]
+    # Ergänzen auf 4 zufällige Antwortmöglichkeiten (inkl. korrekt)
+    while len(choices) < 4:
+        candidate = random.choice(vocab_subset)
+        if candidate[target] not in choices:
+            choices.append(candidate[target])
+    random.shuffle(choices)
+
+    st.session_state.choices = choices
+    st.session_state.selected_choice = None
+    st.session_state.last_index = st.session_state.index
+
         st.session_state.choices = choices
         st.session_state.selected_choice = None
         st.session_state.last_index = st.session_state.index
