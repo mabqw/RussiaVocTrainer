@@ -248,10 +248,6 @@ if (
     st.session_state.selected_choice = None
     st.session_state.last_index = st.session_state.index
 
-        st.session_state.choices = choices
-        st.session_state.selected_choice = None
-        st.session_state.last_index = st.session_state.index
-
     try:
         default_index = st.session_state.choices.index(st.session_state.selected_choice)
     except (ValueError, TypeError):
